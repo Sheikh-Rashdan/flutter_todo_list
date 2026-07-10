@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:todo_list/data/constants.dart';
 import 'package:todo_list/data/todos.dart';
+import 'package:todo_list/widgets/title_card.dart';
 
 class TodoCard extends StatelessWidget {
   const TodoCard({super.key, required this.currentTodo, this.lastCard = false});
@@ -36,6 +39,7 @@ class TodoCard extends StatelessWidget {
                     TextEditingController(text: currentTodo.task);
                 showModalBottomSheet(
                   context: context,
+                  isScrollControlled: true,
                   builder: (context) {
                     return EditTodoSheet(
                       newTaskStringController: newTaskStringController,
@@ -108,20 +112,73 @@ class EditTodoSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(controller: newTaskStringController),
-        FilledButton.tonal(
-          onPressed: () {
-            String newTask = newTaskStringController.text;
-            if (newTask != currentTodo.task) {
-              currentTodo.editTask(newTask);
-            }
-            Navigator.of(context).pop();
-          },
-          child: Text("Edit"),
-        ),
-      ],
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: max(50, MediaQuery.of(context).viewInsets.bottom + 10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        spacing: 12,
+        children: [
+          TitleCard(title: "Edit Todo"),
+          TextField(
+            controller: newTaskStringController,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            decoration: InputDecoration(
+              fillColor: Colors.red,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              label: Text(
+                "Enter Task",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              prefixIcon: Icon(Icons.bookmark_add),
+              prefixIconColor: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          FilledButton(
+            onPressed: () {
+              String newTask = newTaskStringController.text;
+              if (newTask != currentTodo.task) {
+                currentTodo.editTask(newTask);
+              }
+              Navigator.of(context).pop();
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 5,
+              children: [
+                Text(
+                  "Edit",
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Icon(
+                  Icons.edit_rounded,
+                  size: Theme.of(context).textTheme.bodyLarge?.fontSize,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
