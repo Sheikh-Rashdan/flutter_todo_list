@@ -54,6 +54,7 @@ class _TodoPageState extends State<TodoPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: ListView(
+        physics: BouncingScrollPhysics(),
         children: [
           SizedBox(height: 10),
           Column(
