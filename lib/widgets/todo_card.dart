@@ -100,7 +100,7 @@ class TodoCard extends StatelessWidget {
   }
 }
 
-class EditTodoSheet extends StatelessWidget {
+class EditTodoSheet extends StatefulWidget {
   const EditTodoSheet({
     super.key,
     required this.newTaskStringController,
@@ -111,7 +111,14 @@ class EditTodoSheet extends StatelessWidget {
   final Todo currentTodo;
 
   @override
+  State<EditTodoSheet> createState() => _EditTodoSheetState();
+}
+
+class _EditTodoSheetState extends State<EditTodoSheet> {
+  @override
   Widget build(BuildContext context) {
+    bool buttonEnabled =
+        widget.newTaskStringController.text != widget.currentTodo.task;
     return Padding(
       padding: EdgeInsets.only(
         left: 10,
@@ -126,7 +133,7 @@ class EditTodoSheet extends StatelessWidget {
         children: [
           TitleCard(title: "Edit Todo"),
           TextField(
-            controller: newTaskStringController,
+            controller: widget.newTaskStringController,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
             decoration: InputDecoration(
               fillColor: Colors.red,
@@ -150,15 +157,20 @@ class EditTodoSheet extends StatelessWidget {
               prefixIcon: Icon(Icons.bookmark_add),
               prefixIconColor: Theme.of(context).colorScheme.primary,
             ),
+            onChanged: (String value) {
+              setState(() {});
+            },
           ),
           FilledButton(
-            onPressed: () {
-              String newTask = newTaskStringController.text;
-              if (newTask != currentTodo.task) {
-                currentTodo.editTask(newTask);
-              }
-              Navigator.of(context).pop();
-            },
+            onPressed: buttonEnabled
+                ? () {
+                    String newTask = widget.newTaskStringController.text;
+                    if (newTask != widget.currentTodo.task) {
+                      widget.currentTodo.editTask(newTask);
+                    }
+                    Navigator.of(context).pop();
+                  }
+                : null,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 5,
@@ -166,13 +178,18 @@ class EditTodoSheet extends StatelessWidget {
                 Text(
                   "Edit",
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.w500,
+                    color: buttonEnabled
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Colors.grey,
                   ),
                 ),
                 Icon(
                   Icons.edit_rounded,
                   size: Theme.of(context).textTheme.bodyLarge?.fontSize,
+                  color: buttonEnabled
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Colors.grey,
                 ),
               ],
             ),
