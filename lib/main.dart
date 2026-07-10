@@ -12,17 +12,24 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: SettingsValueNotifiers.themeColor,
-      builder: (context, value, child) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        SettingsValueNotifiers.themeColor,
+        SettingsValueNotifiers.useDarkBrightness,
+      ]),
+      builder: (context, child) {
         return MaterialApp(
           title: "Todo App",
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: value,
-              brightness: Brightness.dark,
-              contrastLevel: 0.3,
+              seedColor: SettingsValueNotifiers.themeColor.value,
+              brightness: SettingsValueNotifiers.useDarkBrightness.value
+                  ? Brightness.dark
+                  : Brightness.light,
+              contrastLevel: SettingsValueNotifiers.useDarkBrightness.value
+                  ? 0.3
+                  : 0.2,
             ),
             useMaterial3: true,
           ),
@@ -36,7 +43,7 @@ class MainApp extends StatelessWidget {
 class Home extends StatelessWidget {
   const Home({super.key});
 
-  void toggleThemeColor() {
+  void cycleThemeColor() {
     Color currentColor = SettingsValueNotifiers.themeColor.value;
     for (Color color in KColors.themeColorOptions) {
       if (color == currentColor) {
@@ -48,6 +55,11 @@ class Home extends StatelessWidget {
                 KColors.themeColorOptions.length];
       }
     }
+  }
+
+  void toggleBrightness() {
+    SettingsValueNotifiers.useDarkBrightness.value =
+        !SettingsValueNotifiers.useDarkBrightness.value;
   }
 
   @override
@@ -63,9 +75,21 @@ class Home extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: IconButton(
-              onPressed: toggleThemeColor,
-              icon: Icon(Icons.brush_rounded),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: cycleThemeColor,
+                  icon: Icon(Icons.brush_rounded),
+                ),
+                IconButton(
+                  onPressed: toggleBrightness,
+                  icon: Icon(
+                    SettingsValueNotifiers.useDarkBrightness.value
+                        ? Icons.dark_mode_rounded
+                        : Icons.light_mode_rounded,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

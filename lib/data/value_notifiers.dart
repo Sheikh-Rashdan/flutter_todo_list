@@ -5,4 +5,5 @@ class SettingsValueNotifiers {
   static ValueNotifier<Color> themeColor = ValueNotifier(
     KColors.themeColorOptions[0],
   );
+  static ValueNotifier<bool> useDarkBrightness = ValueNotifier(true);
 }
