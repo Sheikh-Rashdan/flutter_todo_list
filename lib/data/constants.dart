@@ -19,3 +19,8 @@ class KTextStyles {
     fontWeight: FontWeight.bold,
   );
 }
+
+class KPrefKeys {
+  static const String useDarkBrightnessKey = "USE_DARK_BRIGHTNESS";
+  static const String colorThemeIndexKey = "COLOR_THEME_INDEX";
+}

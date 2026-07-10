@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/data/constants.dart';
-import 'package:todo_list/data/value_notifiers.dart';
+import 'package:todo_list/data/settings.dart';
 import 'package:todo_list/pages/todo_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Settings.loadSharedPreferences();
+
   runApp(const MainApp());
 }
 
@@ -14,8 +19,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([
-        SettingsValueNotifiers.themeColor,
-        SettingsValueNotifiers.useDarkBrightness,
+        Settings.themeColor,
+        Settings.useDarkBrightness,
       ]),
       builder: (context, child) {
         return MaterialApp(
@@ -23,13 +28,11 @@ class MainApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
-              seedColor: SettingsValueNotifiers.themeColor.value,
-              brightness: SettingsValueNotifiers.useDarkBrightness.value
+              seedColor: Settings.themeColor.value,
+              brightness: Settings.useDarkBrightness.value
                   ? Brightness.dark
                   : Brightness.light,
-              contrastLevel: SettingsValueNotifiers.useDarkBrightness.value
-                  ? 0.3
-                  : 0.2,
+              contrastLevel: Settings.useDarkBrightness.value ? 0.3 : 0.2,
             ),
             useMaterial3: true,
           ),
@@ -43,23 +46,29 @@ class MainApp extends StatelessWidget {
 class Home extends StatelessWidget {
   const Home({super.key});
 
-  void cycleThemeColor() {
-    Color currentColor = SettingsValueNotifiers.themeColor.value;
-    for (Color color in KColors.themeColorOptions) {
-      if (color == currentColor) {
-        SettingsValueNotifiers.themeColor.value =
-            KColors.themeColorOptions[(KColors.themeColorOptions.indexOf(
-                      currentColor,
-                    ) +
-                    1) %
-                KColors.themeColorOptions.length];
+  void cycleThemeColor() async {
+    Color currentColor = Settings.themeColor.value;
+    int length = KColors.themeColorOptions.length, newIndex = 0;
+    for (int i = 0; i < length; i++) {
+      if (KColors.themeColorOptions[i] == currentColor) {
+        newIndex = (i + 1) % length;
+        Settings.themeColor.value = KColors.themeColorOptions[newIndex];
+        break;
       }
     }
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(KPrefKeys.colorThemeIndexKey, newIndex);
   }
 
-  void toggleBrightness() {
-    SettingsValueNotifiers.useDarkBrightness.value =
-        !SettingsValueNotifiers.useDarkBrightness.value;
+  void toggleBrightness() async {
+    Settings.useDarkBrightness.value = !Settings.useDarkBrightness.value;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(
+      KPrefKeys.useDarkBrightnessKey,
+      Settings.useDarkBrightness.value,
+    );
   }
 
   @override
@@ -84,7 +93,7 @@ class Home extends StatelessWidget {
                 IconButton(
                   onPressed: toggleBrightness,
                   icon: Icon(
-                    SettingsValueNotifiers.useDarkBrightness.value
+                    Settings.useDarkBrightness.value
                         ? Icons.dark_mode_rounded
                         : Icons.light_mode_rounded,
                   ),
