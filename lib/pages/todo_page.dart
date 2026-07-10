@@ -81,18 +81,27 @@ class _TodoPageState extends State<TodoPage> {
                       IconButton.outlined(
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: _selectedCategoryId != null
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.grey,
                           ),
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withAlpha(50),
+                          disabledForegroundColor: Colors.grey,
+                          disabledBackgroundColor: Colors.grey.withAlpha(50),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _selectedCategoryId = null;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.clear_all_rounded,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                        onPressed: _selectedCategoryId != null
+                            ? () {
+                                setState(() {
+                                  _selectedCategoryId = null;
+                                });
+                              }
+                            : null,
+                        icon: Icon(Icons.clear_all_rounded),
                         tooltip: "Clear Category",
                       ),
                     ],
