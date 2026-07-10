@@ -10,29 +10,52 @@ class TodoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    IconButton actionButton = currentTodo.completed
-        ? IconButton.filledTonal(
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.white.withAlpha(50),
+    List<Widget> actionRowWidgets = currentTodo.completed
+        ? [
+            ActionButton(
+              currentTodo: currentTodo,
+              icon: Icon(Icons.undo_rounded),
+              onPressed: () {
+                currentTodo.markUncompleted();
+              },
             ),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(),
-            onPressed: () {
-              TodoHandler.removeTodo(id: currentTodo.id);
-            },
-            icon: Icon(Icons.delete_forever),
-          )
-        : IconButton.filledTonal(
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.white.withAlpha(50),
+            ActionButton(
+              currentTodo: currentTodo,
+              icon: Icon(Icons.delete_forever),
+              onPressed: () {
+                TodoHandler.removeTodo(id: currentTodo.id);
+              },
             ),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(),
-            onPressed: () {
-              currentTodo.markCompleted();
-            },
-            icon: Icon(Icons.check_rounded),
-          );
+          ]
+        : [
+            ActionButton(
+              currentTodo: currentTodo,
+              icon: Icon(Icons.edit_rounded),
+              onPressed: () {
+                TextEditingController newTaskStringController =
+                    TextEditingController(text: currentTodo.task);
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return EditTodoSheet(
+                      newTaskStringController: newTaskStringController,
+                      currentTodo: currentTodo,
+                    );
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                );
+              },
+            ),
+            ActionButton(
+              currentTodo: currentTodo,
+              icon: Icon(Icons.check_rounded),
+              onPressed: () {
+                currentTodo.markCompleted();
+              },
+            ),
+          ];
 
     return Container(
       margin: lastCard
@@ -66,9 +89,65 @@ class TodoCard extends StatelessWidget {
               ),
             ),
           ),
-          actionButton,
+          Row(children: actionRowWidgets),
         ],
       ),
+    );
+  }
+}
+
+class EditTodoSheet extends StatelessWidget {
+  const EditTodoSheet({
+    super.key,
+    required this.newTaskStringController,
+    required this.currentTodo,
+  });
+
+  final TextEditingController newTaskStringController;
+  final Todo currentTodo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(controller: newTaskStringController),
+        FilledButton.tonal(
+          onPressed: () {
+            String newTask = newTaskStringController.text;
+            if (newTask != currentTodo.task) {
+              currentTodo.editTask(newTask);
+            }
+            Navigator.of(context).pop();
+          },
+          child: Text("Edit"),
+        ),
+      ],
+    );
+  }
+}
+
+class ActionButton extends StatelessWidget {
+  const ActionButton({
+    super.key,
+    required this.currentTodo,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final Todo currentTodo;
+  final Icon icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton.filledTonal(
+      style: FilledButton.styleFrom(
+        backgroundColor: Colors.white.withAlpha(50),
+      ),
+      padding: const EdgeInsets.all(4),
+      constraints: const BoxConstraints(),
+      onPressed: onPressed,
+      icon: icon,
     );
   }
 }

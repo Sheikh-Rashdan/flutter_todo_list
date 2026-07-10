@@ -5,9 +5,13 @@ import 'package:uuid/uuid.dart';
 class TodoHandler {
   static ValueNotifier<List<Todo>> todoListNotifier = ValueNotifier([]);
 
-  static void addTodo({required String task, required Category? category}) {
+  static void addTodo({
+    required String task,
+    required Category? category,
+    int index = 0,
+  }) {
     todoListNotifier.value = List.from(todoListNotifier.value)
-      ..add(Todo(task: task, category: category));
+      ..insert(index, Todo(task: task, category: category));
   }
 
   static void removeTodo({required String id}) {
@@ -50,5 +54,16 @@ class Todo {
   void markCompleted() {
     completed = true;
     TodoHandler.updateTodoListNotifier();
+  }
+
+  void markUncompleted() {
+    completed = false;
+    TodoHandler.updateTodoListNotifier();
+  }
+
+  void editTask(String newTask) {
+    int index = TodoHandler.todoListNotifier.value.indexOf(this);
+    TodoHandler.removeTodo(id: id);
+    TodoHandler.addTodo(task: newTask, category: category, index: index);
   }
 }
