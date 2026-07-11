@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:todo_list/data/todos.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryHandler {
@@ -28,8 +29,12 @@ class CategoryHandler {
   }
 
   static void removeCategory({required String id}) {
+    Category? category = getCategoryById(id);
+    if (category != null) {
+      TodoHandler.nullAllOfCategory(category);
+    }
     categoryListNotifier.value = List.from(categoryListNotifier.value)
-      ..removeWhere((Category currentCategory) => currentCategory.id == id);
+      ..remove(category);
   }
 
   static Category? getCategoryById(String? id) {

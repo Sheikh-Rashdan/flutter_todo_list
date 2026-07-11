@@ -19,6 +19,30 @@ class TodoHandler {
       ..removeWhere((Todo currentTodo) => currentTodo.id == id);
   }
 
+  static void editTodo(
+    Todo todo, {
+    String? newTask,
+    Category? newCategory,
+    bool removeCategory = false,
+  }) {
+    int index = todoListNotifier.value.indexOf(todo);
+    if (removeCategory) {
+      newCategory = null;
+    } else {
+      newCategory ??= todo.category;
+    }
+    removeTodo(id: todo.id);
+    addTodo(task: newTask ?? todo.task, category: newCategory, index: index);
+  }
+
+  static void nullAllOfCategory(Category category) {
+    for (Todo todo in todoListNotifier.value) {
+      if (todo.category == category) {
+        editTodo(todo, removeCategory: true);
+      }
+    }
+  }
+
   static void updateTodoListNotifier() {
     todoListNotifier.value = List.from(todoListNotifier.value);
   }
@@ -62,8 +86,6 @@ class Todo {
   }
 
   void editTask(String newTask) {
-    int index = TodoHandler.todoListNotifier.value.indexOf(this);
-    TodoHandler.removeTodo(id: id);
-    TodoHandler.addTodo(task: newTask, category: category, index: index);
+    TodoHandler.editTodo(this, newTask: newTask);
   }
 }
