@@ -136,7 +136,6 @@ class _EditTodoSheetState extends State<EditTodoSheet> {
             controller: widget.newTaskStringController,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
             decoration: InputDecoration(
-              fillColor: Colors.red,
               border: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Theme.of(context).colorScheme.primary,
