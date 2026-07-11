@@ -107,7 +107,7 @@ class _TodoPageState extends State<TodoPage> {
                       ),
                     ],
                   ),
-                  FilledButton.tonal(
+                  FilledButton(
                     onPressed: createTask,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
