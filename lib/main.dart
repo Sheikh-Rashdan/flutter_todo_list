@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/data/constants.dart';
+import 'package:todo_list/data/navigation.dart';
 import 'package:todo_list/data/settings.dart';
+import 'package:todo_list/pages/category_page.dart';
 import 'package:todo_list/pages/todo_page.dart';
 
 void main() async {
@@ -45,6 +47,8 @@ class MainApp extends StatelessWidget {
 
 class Home extends StatelessWidget {
   const Home({super.key});
+
+  final List<Widget> pages = const [TodoPage(), CategoryPage()];
 
   void cycleThemeColor() async {
     Color currentColor = Settings.themeColor.value;
@@ -104,7 +108,39 @@ class Home extends StatelessWidget {
         ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: TodoPage(),
+      bottomNavigationBar: ValueListenableBuilder(
+        valueListenable: NavigationNotifiers.pageIndex,
+        builder: (context, value, child) {
+          return BottomNavigationBar(
+            currentIndex: value,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.inversePrimary.withAlpha(150),
+            selectedIconTheme: IconThemeData(size: 28),
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.task_outlined),
+                activeIcon: Icon(Icons.task_rounded),
+                label: "Todos",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.category_outlined),
+                activeIcon: Icon(Icons.category_rounded),
+                label: "Categories",
+              ),
+            ],
+            onTap: (int index) {
+              NavigationNotifiers.pageIndex.value = index;
+            },
+          );
+        },
+      ),
+      body: ValueListenableBuilder(
+        valueListenable: NavigationNotifiers.pageIndex,
+        builder: (context, value, child) {
+          return pages[value];
+        },
+      ),
     );
   }
 }
