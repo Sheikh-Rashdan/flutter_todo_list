@@ -64,6 +64,17 @@ class TodoHandler {
         .where((Todo todo) => !todo.completed)
         .toList();
   }
+
+  static List<Todo> getTodosOfCategory(Category? category) {
+    if (category == null) {
+      return todoListNotifier.value
+          .where((Todo todo) => todo.category == null)
+          .toList();
+    }
+    return todoListNotifier.value
+        .where((Todo todo) => todo.category?.id == category.id)
+        .toList();
+  }
 }
 
 class Todo {
