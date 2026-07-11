@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_list/data/constants.dart';
 import 'package:todo_list/data/todos.dart';
 import 'package:todo_list/widgets/action_button.dart';
+import 'package:todo_list/widgets/primary_button.dart';
 import 'package:todo_list/widgets/title_card.dart';
 
 class TodoCard extends StatelessWidget {
@@ -155,7 +156,9 @@ class _EditTodoSheetState extends State<EditTodoSheet> {
               setState(() {});
             },
           ),
-          FilledButton(
+          PrimaryButton(
+            text: "Edit",
+            icon: Icon(Icons.edit_rounded),
             onPressed: buttonEnabled
                 ? () {
                     String newTask = widget.newTaskStringController.text;
@@ -165,28 +168,6 @@ class _EditTodoSheetState extends State<EditTodoSheet> {
                     Navigator.of(context).pop();
                   }
                 : null,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 5,
-              children: [
-                Text(
-                  "Edit",
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: buttonEnabled
-                        ? Theme.of(context).colorScheme.onPrimary
-                        : Colors.grey,
-                  ),
-                ),
-                Icon(
-                  Icons.edit_rounded,
-                  size: Theme.of(context).textTheme.bodyLarge?.fontSize,
-                  color: buttonEnabled
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Colors.grey,
-                ),
-              ],
-            ),
           ),
         ],
       ),

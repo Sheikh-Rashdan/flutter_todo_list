@@ -3,6 +3,7 @@ import 'package:todo_list/data/categories.dart';
 import 'package:todo_list/data/todos.dart';
 import 'package:todo_list/widgets/category_dropdown.dart';
 import 'package:todo_list/widgets/content_column.dart';
+import 'package:todo_list/widgets/primary_button.dart';
 import 'package:todo_list/widgets/scrollable_fade_column.dart';
 import 'package:todo_list/widgets/task_field.dart';
 import 'package:todo_list/widgets/title_card.dart';
@@ -107,16 +108,10 @@ class _TodoPageState extends State<TodoPage> {
                       ),
                     ],
                   ),
-                  FilledButton(
+                  PrimaryButton(
                     onPressed: createTask,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 10,
-                      children: [
-                        Text("Create", style: TextStyle(fontSize: 18)),
-                        Icon(Icons.add_circle_outline_rounded, size: 18),
-                      ],
-                    ),
+                    text: "Create",
+                    icon: Icon(Icons.add_circle_outline_rounded),
                   ),
                 ],
               ),
