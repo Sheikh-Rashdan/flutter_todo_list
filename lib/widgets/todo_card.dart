@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:todo_list/data/constants.dart';
 import 'package:todo_list/data/todos.dart';
+import 'package:todo_list/widgets/action_button.dart';
 import 'package:todo_list/widgets/title_card.dart';
 
 class TodoCard extends StatelessWidget {
@@ -16,14 +17,12 @@ class TodoCard extends StatelessWidget {
     List<Widget> actionRowWidgets = currentTodo.completed
         ? [
             ActionButton(
-              currentTodo: currentTodo,
               icon: Icon(Icons.undo_rounded),
               onPressed: () {
                 currentTodo.markUncompleted();
               },
             ),
             ActionButton(
-              currentTodo: currentTodo,
               icon: Icon(Icons.delete_forever),
               onPressed: () {
                 TodoHandler.removeTodo(id: currentTodo.id);
@@ -32,7 +31,6 @@ class TodoCard extends StatelessWidget {
           ]
         : [
             ActionButton(
-              currentTodo: currentTodo,
               icon: Icon(Icons.edit_rounded),
               onPressed: () {
                 TextEditingController newTaskStringController =
@@ -53,7 +51,6 @@ class TodoCard extends StatelessWidget {
               },
             ),
             ActionButton(
-              currentTodo: currentTodo,
               icon: Icon(Icons.check_rounded),
               onPressed: () {
                 currentTodo.markCompleted();
@@ -82,12 +79,10 @@ class TodoCard extends StatelessWidget {
               child: Text(
                 currentTodo.task,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.black,
                   decoration: currentTodo.completed
                       ? TextDecoration.lineThrough
                       : null,
                   fontStyle: currentTodo.completed ? FontStyle.italic : null,
-                  decorationColor: Colors.black,
                   decorationThickness: 2,
                 ),
               ),
@@ -195,32 +190,6 @@ class _EditTodoSheetState extends State<EditTodoSheet> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class ActionButton extends StatelessWidget {
-  const ActionButton({
-    super.key,
-    required this.currentTodo,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  final Todo currentTodo;
-  final Icon icon;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton.filledTonal(
-      style: FilledButton.styleFrom(
-        backgroundColor: Colors.white.withAlpha(50),
-      ),
-      padding: const EdgeInsets.all(4),
-      constraints: const BoxConstraints(),
-      onPressed: onPressed,
-      icon: icon,
     );
   }
 }
