@@ -93,7 +93,7 @@ class Home extends StatelessWidget {
                 IconButton(
                   onPressed: toggleBrightness,
                   icon: Icon(
-                    Settings.useDarkBrightness.value
+                    Theme.of(context).colorScheme.brightness == Brightness.dark
                         ? Icons.dark_mode_rounded
                         : Icons.light_mode_rounded,
                   ),
