@@ -2,6 +2,8 @@ import "package:flutter/material.dart";
 import "package:todo_list/data/categories.dart";
 import "package:todo_list/widgets/category_page/category_card.dart";
 import "package:todo_list/widgets/content_column.dart";
+import "package:todo_list/widgets/primary_button.dart";
+import "package:todo_list/widgets/primary_text_field.dart";
 import "package:todo_list/widgets/scrollable_fade_column.dart";
 import "package:todo_list/widgets/title_card.dart";
 
@@ -13,6 +15,36 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+  final TextEditingController _categoryNameStringController =
+      TextEditingController();
+  late FocusNode _categoryFieldFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _categoryFieldFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _categoryFieldFocusNode.dispose();
+    super.dispose();
+  }
+
+  void createCategory() {
+    String categoryName = _categoryNameStringController.text.trim();
+    if (categoryName == "") {
+      _categoryFieldFocusNode.requestFocus();
+      return;
+    }
+
+    CategoryHandler.addCategory(name: categoryName);
+
+    setState(() {
+      _categoryNameStringController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -44,6 +76,22 @@ class _CategoryPageState extends State<CategoryPage> {
                         emptyWidget: Text("No Categories"),
                       );
                     },
+                  ),
+                ],
+              ),
+              ContentColumn(
+                children: [
+                  TitleCard(title: "Create a Category"),
+                  PrimaryTextField(
+                    controller: _categoryNameStringController,
+                    focusNode: _categoryFieldFocusNode,
+                    labelText: "Enter Category Name",
+                    prefixIcon: Icon(Icons.category_rounded),
+                  ),
+                  PrimaryButton(
+                    text: "Create",
+                    icon: Icon(Icons.add_circle_rounded),
+                    onPressed: createCategory,
                   ),
                 ],
               ),
