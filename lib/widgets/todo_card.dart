@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:todo_list/data/constants.dart';
 import 'package:todo_list/data/todos.dart';
 import 'package:todo_list/widgets/action_button.dart';
-import 'package:todo_list/widgets/primary_button.dart';
-import 'package:todo_list/widgets/title_card.dart';
+import 'package:todo_list/widgets/edit_sheet.dart';
 
 class TodoCard extends StatelessWidget {
   const TodoCard({super.key, required this.currentTodo, this.lastCard = false});
@@ -39,9 +36,14 @@ class TodoCard extends StatelessWidget {
                 showModalBottomSheet(
                   context: context,
                   builder: (context) {
-                    return EditTodoSheet(
-                      newTaskStringController: newTaskStringController,
-                      currentTodo: currentTodo,
+                    return EditSheet(
+                      title: "Edit Todo",
+                      textFieldLabel: "Enter Task",
+                      currentString: currentTodo.task,
+                      newStringController: newTaskStringController,
+                      editObject: (String newString) {
+                        currentTodo.editTask(newString);
+                      },
                     );
                   },
                   isScrollControlled: true,
@@ -90,85 +92,6 @@ class TodoCard extends StatelessWidget {
             ),
           ),
           Row(children: actionRowWidgets),
-        ],
-      ),
-    );
-  }
-}
-
-class EditTodoSheet extends StatefulWidget {
-  const EditTodoSheet({
-    super.key,
-    required this.newTaskStringController,
-    required this.currentTodo,
-  });
-
-  final TextEditingController newTaskStringController;
-  final Todo currentTodo;
-
-  @override
-  State<EditTodoSheet> createState() => _EditTodoSheetState();
-}
-
-class _EditTodoSheetState extends State<EditTodoSheet> {
-  @override
-  Widget build(BuildContext context) {
-    bool buttonEnabled =
-        widget.newTaskStringController.text != widget.currentTodo.task;
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 10,
-        right: 10,
-        top: 10,
-        bottom: max(50, MediaQuery.of(context).viewInsets.bottom + 10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        spacing: 12,
-        children: [
-          TitleCard(title: "Edit Todo"),
-          TextField(
-            controller: widget.newTaskStringController,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              label: Text(
-                "Enter Task",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              prefixIcon: Icon(Icons.bookmark_add),
-              prefixIconColor: Theme.of(context).colorScheme.primary,
-            ),
-            onChanged: (String value) {
-              setState(() {});
-            },
-          ),
-          PrimaryButton(
-            text: "Edit",
-            icon: Icon(Icons.edit_rounded),
-            onPressed: buttonEnabled
-                ? () {
-                    String newTask = widget.newTaskStringController.text;
-                    if (newTask != widget.currentTodo.task) {
-                      widget.currentTodo.editTask(newTask);
-                    }
-                    Navigator.of(context).pop();
-                  }
-                : null,
-          ),
         ],
       ),
     );

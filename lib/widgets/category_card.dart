@@ -1,11 +1,8 @@
-import "dart:math";
-
 import "package:flutter/material.dart";
 import "package:todo_list/data/categories.dart";
 import "package:todo_list/widgets/action_button.dart";
 import "package:todo_list/widgets/confirm_dialog.dart";
-import "package:todo_list/widgets/primary_button.dart";
-import "package:todo_list/widgets/title_card.dart";
+import "package:todo_list/widgets/edit_sheet.dart";
 
 class CategoryCard extends StatelessWidget {
   const CategoryCard({
@@ -50,10 +47,14 @@ class CategoryCard extends StatelessWidget {
                   showModalBottomSheet(
                     context: context,
                     builder: (context) {
-                      return EditCategorySheet(
-                        newCategoryStringController:
-                            newCategoryStringController,
-                        currentCategory: currentCategory,
+                      return EditSheet(
+                        title: "Edit Category",
+                        textFieldLabel: "Enter Category Name",
+                        currentString: currentCategory.name,
+                        newStringController: newCategoryStringController,
+                        editObject: (String newString) {
+                          currentCategory.editCategory(newString);
+                        },
                       );
                     },
                     isScrollControlled: true,
@@ -83,85 +84,6 @@ class CategoryCard extends StatelessWidget {
                 },
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class EditCategorySheet extends StatefulWidget {
-  const EditCategorySheet({
-    super.key,
-    required this.newCategoryStringController,
-    required this.currentCategory,
-  });
-
-  final TextEditingController newCategoryStringController;
-  final Category currentCategory;
-
-  @override
-  State<EditCategorySheet> createState() => _EditCategorySheetState();
-}
-
-class _EditCategorySheetState extends State<EditCategorySheet> {
-  @override
-  Widget build(BuildContext context) {
-    bool buttonEnabled =
-        widget.newCategoryStringController.text != widget.currentCategory.name;
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 10,
-        right: 10,
-        top: 10,
-        bottom: max(50, MediaQuery.of(context).viewInsets.bottom + 10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        spacing: 12,
-        children: [
-          TitleCard(title: "Edit Category"),
-          TextField(
-            controller: widget.newCategoryStringController,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              label: Text(
-                "Enter Category Name",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              prefixIcon: Icon(Icons.bookmark_add),
-              prefixIconColor: Theme.of(context).colorScheme.primary,
-            ),
-            onChanged: (String value) {
-              setState(() {});
-            },
-          ),
-          PrimaryButton(
-            text: "Edit",
-            icon: Icon(Icons.edit_rounded),
-            onPressed: buttonEnabled
-                ? () {
-                    String newName = widget.newCategoryStringController.text;
-                    if (newName != widget.currentCategory.name) {
-                      widget.currentCategory.editCategory(newName);
-                    }
-                    Navigator.of(context).pop();
-                  }
-                : null,
           ),
         ],
       ),
