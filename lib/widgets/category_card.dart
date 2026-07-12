@@ -72,7 +72,7 @@ class CategoryCard extends StatelessWidget {
                     builder: (context) {
                       return ConfirmDialog(
                         title: "Delete Category?",
-                        iconData: Icons.warning_amber_rounded,
+                        iconData: Icons.warning_rounded,
                         onConfirm: () {
                           CategoryHandler.removeCategory(
                             id: currentCategory.id,
