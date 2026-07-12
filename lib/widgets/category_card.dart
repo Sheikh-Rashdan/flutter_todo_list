@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:todo_list/data/categories.dart";
 import "package:todo_list/widgets/action_button.dart";
-import "package:todo_list/widgets/primary_button.dart";
+import "package:todo_list/widgets/confirm_dialog.dart";
 
 class CategoryCard extends StatelessWidget {
   const CategoryCard({
@@ -45,47 +45,14 @@ class CategoryCard extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        title: Row(
-                          spacing: 10,
-                          children: [
-                            Icon(
-                              Icons.warning_rounded,
-                              size: Theme.of(
-                                context,
-                              ).textTheme.headlineLarge?.fontSize,
-                            ),
-                            Text(
-                              "Delete Category?",
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            spacing: 10,
-                            children: [
-                              PrimaryButton(
-                                text: "Cancel",
-                                icon: Icon(Icons.cancel_rounded),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              PrimaryButton(
-                                text: "Confirm",
-                                icon: Icon(Icons.check_circle_rounded),
-                                onPressed: () {
-                                  CategoryHandler.removeCategory(
-                                    id: currentCategory.id,
-                                  );
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                      return ConfirmDialog(
+                        title: "Delete Category?",
+                        iconData: Icons.warning_amber_rounded,
+                        onConfirm: () {
+                          CategoryHandler.removeCategory(
+                            id: currentCategory.id,
+                          );
+                        },
                       );
                     },
                   );
