@@ -18,6 +18,7 @@ class TodoPage extends StatefulWidget {
 
 class _TodoPageState extends State<TodoPage> {
   String? _selectedCategoryId;
+  String _selectedOutput = "Uncompleted";
   final TextEditingController _taskStringController = TextEditingController();
   late FocusNode _taskFieldFocusNode;
 
@@ -117,47 +118,85 @@ class _TodoPageState extends State<TodoPage> {
               ),
               ContentColumn(
                 children: [
-                  TitleCard(title: "Uncompleted Tasks"),
-                  ValueListenableBuilder(
-                    valueListenable: TodoHandler.todoListNotifier,
-                    builder: (context, value, child) {
-                      return ScrollableFadeColumn(
-                        height: 250,
-                        itemCount: TodoHandler.getUncompletedTodosLength(),
-                        itemBuilder: (context, index) {
-                          Todo currentTodo =
-                              TodoHandler.getUncompletedTodos()[index];
-                          return TodoCard(
-                            currentTodo: currentTodo,
-                            lastCard:
-                                index + 1 ==
-                                TodoHandler.getUncompletedTodosLength(),
-                          );
-                        },
-                        emptyWidget: Text("No Uncompleted Tasks"),
-                      );
+                  SegmentedButton<String>(
+                    segments: [
+                      ButtonSegment(
+                        value: "Uncompleted",
+                        label: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text("Uncompleted"),
+                        ),
+                        icon: Icon(Icons.view_headline_rounded),
+                      ),
+                      ButtonSegment(
+                        value: "Completed",
+                        label: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text("Completed"),
+                        ),
+                        icon: Icon(Icons.checklist_rounded),
+                      ),
+                    ],
+                    selected: {_selectedOutput},
+                    showSelectedIcon: false,
+                    style: SegmentedButton.styleFrom(
+                      textStyle: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w500),
+                      iconSize: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.fontSize,
+                      selectedBackgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.inversePrimary,
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(10),
+                      ),
+                    ),
+                    onSelectionChanged: (Set<String> set) {
+                      setState(() {
+                        _selectedOutput = set.single;
+                      });
                     },
                   ),
-                  TitleCard(title: "Completed Tasks"),
-
                   ValueListenableBuilder(
                     valueListenable: TodoHandler.todoListNotifier,
                     builder: (context, value, child) {
-                      return ScrollableFadeColumn(
-                        height: 250,
-                        itemCount: TodoHandler.getCompletedTodosLength(),
-                        itemBuilder: (context, index) {
-                          Todo currentTodo =
-                              TodoHandler.getCompletedTodos()[index];
-                          return TodoCard(
-                            currentTodo: currentTodo,
-                            lastCard:
-                                index + 1 ==
-                                TodoHandler.getCompletedTodosLength(),
-                          );
-                        },
-                        emptyWidget: Text("No Completed Tasks"),
-                      );
+                      return _selectedOutput == "Uncompleted"
+                          ? ScrollableFadeColumn(
+                              height: 250,
+                              itemCount:
+                                  TodoHandler.getUncompletedTodosLength(),
+                              itemBuilder: (context, index) {
+                                Todo currentTodo =
+                                    TodoHandler.getUncompletedTodos()[index];
+                                return TodoCard(
+                                  currentTodo: currentTodo,
+                                  lastCard:
+                                      index + 1 ==
+                                      TodoHandler.getUncompletedTodosLength(),
+                                );
+                              },
+                              emptyWidget: Text("No Uncompleted Tasks"),
+                            )
+                          : ScrollableFadeColumn(
+                              height: 250,
+                              itemCount: TodoHandler.getCompletedTodosLength(),
+                              itemBuilder: (context, index) {
+                                Todo currentTodo =
+                                    TodoHandler.getCompletedTodos()[index];
+                                return TodoCard(
+                                  currentTodo: currentTodo,
+                                  lastCard:
+                                      index + 1 ==
+                                      TodoHandler.getCompletedTodosLength(),
+                                );
+                              },
+                              emptyWidget: Text("No Completed Tasks"),
+                            );
                     },
                   ),
                 ],
