@@ -6,10 +6,10 @@ import 'package:uuid/uuid.dart';
 
 class CategoryHandler {
   static ValueNotifier<List<Category>> categoryListNotifier = ValueNotifier([
-    Category(name: "Category 1", color: colorList[0]),
-    Category(name: "Category 2", color: colorList[1]),
-    Category(name: "Category 3", color: colorList[2]),
-    Category(name: "Category 4", color: colorList[3]),
+    Category(name: "Work", color: colorList[0]),
+    Category(name: "Groceries", color: colorList[1]),
+    Category(name: "Hobbies", color: colorList[2]),
+    Category(name: "School", color: colorList[3]),
   ]);
 
   static List<Color> colorList = const [
