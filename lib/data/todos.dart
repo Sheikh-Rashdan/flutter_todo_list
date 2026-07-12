@@ -8,10 +8,14 @@ class TodoHandler {
   static void addTodo({
     required String task,
     required Category? category,
+    bool completed = false,
     int index = 0,
   }) {
     todoListNotifier.value = List.from(todoListNotifier.value)
-      ..insert(index, Todo(task: task, category: category));
+      ..insert(
+        index,
+        Todo(task: task, category: category, completed: completed),
+      );
   }
 
   static void removeTodo({required String id}) {
@@ -32,7 +36,12 @@ class TodoHandler {
       newCategory ??= todo.category;
     }
     removeTodo(id: todo.id);
-    addTodo(task: newTask ?? todo.task, category: newCategory, index: index);
+    addTodo(
+      task: newTask ?? todo.task,
+      category: newCategory,
+      completed: todo.completed,
+      index: index,
+    );
   }
 
   static void nullAllOfCategory(Category category) {
