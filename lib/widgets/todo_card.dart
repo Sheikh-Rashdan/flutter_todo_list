@@ -38,13 +38,13 @@ class TodoCard extends StatelessWidget {
                     TextEditingController(text: currentTodo.task);
                 showModalBottomSheet(
                   context: context,
-                  isScrollControlled: true,
                   builder: (context) {
                     return EditTodoSheet(
                       newTaskStringController: newTaskStringController,
                       currentTodo: currentTodo,
                     );
                   },
+                  isScrollControlled: true,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
