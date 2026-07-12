@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
-class TaskField extends StatelessWidget {
-  const TaskField({
+class PrimaryTextField extends StatelessWidget {
+  const PrimaryTextField({
     super.key,
     required this.controller,
     required this.focusNode,
+    required this.labelText,
+    required this.prefixIcon,
   });
 
   final TextEditingController controller;
   final FocusNode focusNode;
+  final String labelText;
+  final Icon prefixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +29,13 @@ class TaskField extends StatelessWidget {
           borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
         ),
         label: Text(
-          "Enter Task",
+          labelText,
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.w600,
           ),
         ),
-        prefixIcon: Icon(Icons.bookmark_add),
+        prefixIcon: prefixIcon,
         prefixIconColor: Theme.of(context).colorScheme.primary,
       ),
     );
