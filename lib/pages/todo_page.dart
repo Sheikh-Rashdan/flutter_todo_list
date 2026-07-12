@@ -115,7 +115,7 @@ class _TodoPageState extends State<TodoPage> {
                   PrimaryButton(
                     onPressed: createTask,
                     text: "Create",
-                    icon: Icon(Icons.add_circle_outline_rounded),
+                    icon: Icon(Icons.add_circle_rounded),
                   ),
                 ],
               ),
