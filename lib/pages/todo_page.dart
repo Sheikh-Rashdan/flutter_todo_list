@@ -8,6 +8,7 @@ import 'package:todo_list/widgets/scrollable_fade_column.dart';
 import 'package:todo_list/widgets/task_field.dart';
 import 'package:todo_list/widgets/title_card.dart';
 import 'package:todo_list/widgets/todo_card.dart';
+import 'package:todo_list/widgets/todo_display_selection_segmented_button.dart';
 
 class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
@@ -118,47 +119,11 @@ class _TodoPageState extends State<TodoPage> {
               ),
               ContentColumn(
                 children: [
-                  SegmentedButton<String>(
-                    segments: [
-                      ButtonSegment(
-                        value: "Uncompleted",
-                        label: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text("Uncompleted"),
-                        ),
-                        icon: Icon(Icons.view_headline_rounded),
-                      ),
-                      ButtonSegment(
-                        value: "Completed",
-                        label: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text("Completed"),
-                        ),
-                        icon: Icon(Icons.checklist_rounded),
-                      ),
-                    ],
-                    selected: {_selectedOutput},
-                    showSelectedIcon: false,
-                    style: SegmentedButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w500),
-                      iconSize: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.fontSize,
-                      selectedBackgroundColor: Theme.of(
-                        context,
-                      ).colorScheme.inversePrimary,
-                      side: BorderSide(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                        width: 2,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(10),
-                      ),
-                    ),
-                    onSelectionChanged: (Set<String> set) {
+                  TodoDisplaySelectionSegmentedButton(
+                    selectedOutput: _selectedOutput,
+                    onSelectionChanged: (Set<String> newSelection) {
                       setState(() {
-                        _selectedOutput = set.single;
+                        _selectedOutput = newSelection.single;
                       });
                     },
                   ),
