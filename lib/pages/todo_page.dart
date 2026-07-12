@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/data/categories.dart';
 import 'package:todo_list/data/todos.dart';
-import 'package:todo_list/widgets/category_dropdown.dart';
+import 'package:todo_list/widgets/todo_page/category_dropdown.dart';
 import 'package:todo_list/widgets/content_column.dart';
 import 'package:todo_list/widgets/primary_button.dart';
 import 'package:todo_list/widgets/scrollable_fade_column.dart';
-import 'package:todo_list/widgets/task_field.dart';
+import 'package:todo_list/widgets/todo_page/task_field.dart';
 import 'package:todo_list/widgets/title_card.dart';
-import 'package:todo_list/widgets/todo_card.dart';
-import 'package:todo_list/widgets/todo_display_selection_segmented_button.dart';
+import 'package:todo_list/widgets/todo_page/todo_card.dart';
+import 'package:todo_list/widgets/todo_page/todo_display_selection_segmented_button.dart';
 
 class TodoPage extends StatefulWidget {
   const TodoPage({super.key});

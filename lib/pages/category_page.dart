@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:todo_list/data/categories.dart";
-import "package:todo_list/widgets/category_card.dart";
+import "package:todo_list/widgets/category_page/category_card.dart";
 import "package:todo_list/widgets/content_column.dart";
 import "package:todo_list/widgets/scrollable_fade_column.dart";
 import "package:todo_list/widgets/title_card.dart";
