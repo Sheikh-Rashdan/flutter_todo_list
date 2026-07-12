@@ -132,7 +132,7 @@ class _TodoPageState extends State<TodoPage> {
                     builder: (context, value, child) {
                       return _selectedOutput == "Uncompleted"
                           ? ScrollableFadeColumn(
-                              height: 250,
+                              height: 300,
                               itemCount:
                                   TodoHandler.getUncompletedTodosLength(),
                               itemBuilder: (context, index) {
@@ -148,7 +148,7 @@ class _TodoPageState extends State<TodoPage> {
                               emptyWidget: Text("No Uncompleted Tasks"),
                             )
                           : ScrollableFadeColumn(
-                              height: 250,
+                              height: 300,
                               itemCount: TodoHandler.getCompletedTodosLength(),
                               itemBuilder: (context, index) {
                                 Todo currentTodo =

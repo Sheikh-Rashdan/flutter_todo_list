@@ -32,7 +32,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     valueListenable: CategoryHandler.categoryListNotifier,
                     builder: (context, value, child) {
                       return ScrollableFadeColumn(
-                        height: 250,
+                        height: 300,
                         itemCount: value.length,
                         itemBuilder: (context, index) {
                           Category currentCategory = value[index];
