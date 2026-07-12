@@ -22,10 +22,15 @@ class CategoryHandler {
     Color(0xFF9A82C7),
   ];
 
-  static void addCategory({required String name, Color? color}) {
+  static void addCategory({required String name, Color? color, int? index}) {
     color = color ?? colorList[Random().nextInt(colorList.length)];
-    categoryListNotifier.value = List.from(categoryListNotifier.value)
-      ..add(Category(name: name, color: color));
+    if (index == null) {
+      categoryListNotifier.value = List.from(categoryListNotifier.value)
+        ..add(Category(name: name, color: color));
+    } else {
+      categoryListNotifier.value = List.from(categoryListNotifier.value)
+        ..insert(index, Category(name: name, color: color));
+    }
   }
 
   static void removeCategory({required String id}) {
@@ -44,6 +49,12 @@ class CategoryHandler {
     }
     return null;
   }
+
+  static void editCategory(Category category, {required String newName}) {
+    int index = categoryListNotifier.value.indexOf(category);
+    removeCategory(id: category.id);
+    addCategory(name: newName, color: category.color, index: index);
+  }
 }
 
 class Category {
@@ -52,4 +63,8 @@ class Category {
   final Color color;
 
   Category({required this.name, required this.color}) : id = const Uuid().v4();
+
+  void editCategory(String newName) {
+    CategoryHandler.editCategory(this, newName: newName);
+  }
 }
