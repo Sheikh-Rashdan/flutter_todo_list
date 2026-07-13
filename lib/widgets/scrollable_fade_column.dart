@@ -5,7 +5,7 @@ class ScrollableFadeColumn extends StatelessWidget {
     super.key,
     required this.height,
     required this.itemBuilder,
-    this.itemCount,
+    required this.itemCount,
     this.emptyWidget,
   });
 
