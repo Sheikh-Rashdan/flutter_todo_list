@@ -132,38 +132,23 @@ class _TodoPageState extends State<TodoPage> {
                   ValueListenableBuilder(
                     valueListenable: TodoHandler.todoListNotifier,
                     builder: (context, value, child) {
-                      return _selectedOutput == "Uncompleted"
-                          ? ScrollableFadeColumn(
-                              height: 300,
-                              itemCount:
-                                  TodoHandler.getUncompletedTodosLength(),
-                              itemBuilder: (context, index) {
-                                Todo currentTodo =
-                                    TodoHandler.getUncompletedTodos()[index];
-                                return TodoCard(
-                                  currentTodo: currentTodo,
-                                  lastCard:
-                                      index + 1 ==
-                                      TodoHandler.getUncompletedTodosLength(),
-                                );
-                              },
-                              emptyWidget: Text("No Uncompleted Tasks"),
-                            )
-                          : ScrollableFadeColumn(
-                              height: 300,
-                              itemCount: TodoHandler.getCompletedTodosLength(),
-                              itemBuilder: (context, index) {
-                                Todo currentTodo =
-                                    TodoHandler.getCompletedTodos()[index];
-                                return TodoCard(
-                                  currentTodo: currentTodo,
-                                  lastCard:
-                                      index + 1 ==
-                                      TodoHandler.getCompletedTodosLength(),
-                                );
-                              },
-                              emptyWidget: Text("No Completed Tasks"),
-                            );
+                      List<Todo> todoList = TodoHandler.getTodos(
+                        completed: _selectedOutput == "Completed",
+                      );
+                      return ScrollableFadeColumn(
+                        height: 300,
+                        itemCount: todoList.length,
+                        itemBuilder: (context, index) {
+                          Todo currentTodo = todoList[index];
+                          return TodoCard(
+                            currentTodo: currentTodo,
+                            lastCard: index + 1 == todoList.length,
+                          );
+                        },
+                        emptyWidget: Text(
+                          "No ${_selectedOutput == "Completed" ? "Completed" : "Uncompleted"} Tasks",
+                        ),
+                      );
                     },
                   ),
                 ],

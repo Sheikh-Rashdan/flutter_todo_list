@@ -56,33 +56,19 @@ class TodoHandler {
     todoListNotifier.value = List.from(todoListNotifier.value);
   }
 
-  static int getCompletedTodosLength() {
-    return todoListNotifier.value.where((Todo todo) => todo.completed).length;
-  }
-
-  static int getUncompletedTodosLength() {
-    return todoListNotifier.value.where((Todo todo) => !todo.completed).length;
-  }
-
-  static List<Todo> getCompletedTodos() {
-    return todoListNotifier.value.where((Todo todo) => todo.completed).toList();
-  }
-
-  static List<Todo> getUncompletedTodos() {
-    return todoListNotifier.value
-        .where((Todo todo) => !todo.completed)
-        .toList();
-  }
-
-  static List<Todo> getTodosOfCategory(Category? category) {
-    if (category == null) {
-      return todoListNotifier.value
-          .where((Todo todo) => todo.category == null)
+  static List<Todo> getTodos({bool? completed, Category? category}) {
+    List<Todo> todoList = TodoHandler.todoListNotifier.value;
+    if (completed != null) {
+      todoList = todoList
+          .where((Todo currentTodo) => currentTodo.completed == completed)
           .toList();
     }
-    return todoListNotifier.value
-        .where((Todo todo) => todo.category?.id == category.id)
-        .toList();
+    if (category != null) {
+      todoList = todoList
+          .where((Todo currentTodo) => currentTodo.category?.id == category.id)
+          .toList();
+    }
+    return todoList;
   }
 }
 
