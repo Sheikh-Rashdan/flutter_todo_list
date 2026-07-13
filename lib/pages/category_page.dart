@@ -62,28 +62,6 @@ class _CategoryPageState extends State<CategoryPage> {
             children: [
               ContentColumn(
                 children: [
-                  const TitleCard(title: "Categories"),
-                  ValueListenableBuilder(
-                    valueListenable: CategoryHandler.categoryListNotifier,
-                    builder: (context, value, child) {
-                      return ScrollableFadeColumn(
-                        height: 300,
-                        itemCount: value.length,
-                        itemBuilder: (context, index) {
-                          Category currentCategory = value[index];
-                          return CategoryCard(
-                            currentCategory: currentCategory,
-                            lastCard: index + 1 == value.length,
-                          );
-                        },
-                        emptyWidget: Text("No Categories"),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              ContentColumn(
-                children: [
                   TitleCard(title: "Create a Category"),
                   PrimaryTextField(
                     controller: _categoryNameStringController,
@@ -119,6 +97,28 @@ class _CategoryPageState extends State<CategoryPage> {
                     text: "Create",
                     icon: Icon(Icons.add_circle_rounded),
                     onPressed: createCategory,
+                  ),
+                ],
+              ),
+              ContentColumn(
+                children: [
+                  const TitleCard(title: "Categories"),
+                  ValueListenableBuilder(
+                    valueListenable: CategoryHandler.categoryListNotifier,
+                    builder: (context, value, child) {
+                      return ScrollableFadeColumn(
+                        height: 300,
+                        itemCount: value.length,
+                        itemBuilder: (context, index) {
+                          Category currentCategory = value[index];
+                          return CategoryCard(
+                            currentCategory: currentCategory,
+                            lastCard: index + 1 == value.length,
+                          );
+                        },
+                        emptyWidget: Text("No Categories"),
+                      );
+                    },
                   ),
                 ],
               ),
