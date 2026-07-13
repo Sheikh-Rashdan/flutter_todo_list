@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 
 class TitleCard extends StatelessWidget {
-  const TitleCard({super.key, required this.title});
+  const TitleCard({super.key, this.title, this.widget})
+    : assert(title != null || widget != null);
 
-  final String title;
+  final String? title;
+  final Widget? widget;
 
   @override
   Widget build(BuildContext context) {
+    Widget child;
+    if (title != null) {
+      child = Text(
+        title!,
+        style: Theme.of(
+          context,
+        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w500),
+      );
+    } else {
+      child = widget!;
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.inversePrimary,
@@ -18,12 +32,7 @@ class TitleCard extends StatelessWidget {
       ),
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       alignment: Alignment.center,
-      child: Text(
-        title,
-        style: Theme.of(
-          context,
-        ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w500),
-      ),
+      child: child,
     );
   }
 }
