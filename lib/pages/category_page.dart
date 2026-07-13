@@ -15,6 +15,7 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+  int _categoryColorIndex = 0;
   final TextEditingController _categoryNameStringController =
       TextEditingController();
   late FocusNode _categoryFieldFocusNode;
@@ -33,12 +34,14 @@ class _CategoryPageState extends State<CategoryPage> {
 
   void createCategory() {
     String categoryName = _categoryNameStringController.text.trim();
+    Color categoryColor = CategoryHandler.colorList[_categoryColorIndex];
+
     if (categoryName == "") {
       _categoryFieldFocusNode.requestFocus();
       return;
     }
 
-    CategoryHandler.addCategory(name: categoryName);
+    CategoryHandler.addCategory(name: categoryName, color: categoryColor);
 
     setState(() {
       _categoryNameStringController.clear();
@@ -88,6 +91,30 @@ class _CategoryPageState extends State<CategoryPage> {
                     labelText: "Enter Category Name",
                     prefixIcon: Icon(Icons.category_rounded),
                   ),
+                  Center(
+                    child: SizedBox(
+                      height: 50,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: CategoryHandler.colorList.length,
+                        itemBuilder: (context, index) {
+                          Color currentColor = CategoryHandler.colorList[index];
+                          bool selected = index == _categoryColorIndex;
+                          return CategoryColorChip(
+                            selected: selected,
+                            currentColor: currentColor,
+                            onSelected: (value) {
+                              setState(() {
+                                _categoryColorIndex = index;
+                              });
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                   PrimaryButton(
                     text: "Create",
                     icon: Icon(Icons.add_circle_rounded),
@@ -100,6 +127,41 @@ class _CategoryPageState extends State<CategoryPage> {
           SizedBox(height: 10),
         ],
       ),
+    );
+  }
+}
+
+class CategoryColorChip extends StatelessWidget {
+  const CategoryColorChip({
+    super.key,
+    required this.selected,
+    required this.currentColor,
+    required this.onSelected,
+  });
+
+  final bool selected;
+  final Color currentColor;
+  final ValueChanged<bool> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return ChoiceChip(
+      label: selected ? Icon(Icons.check_rounded) : Text(""),
+      selected: selected,
+      color: WidgetStatePropertyAll(currentColor),
+      showCheckmark: false,
+      padding: EdgeInsets.all(selected ? 10 : 8),
+      shape: CircleBorder(
+        side: BorderSide(
+          color:
+              (Theme.of(context).colorScheme.brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black)
+                  .withAlpha(50),
+          width: 2,
+        ),
+      ),
+      onSelected: onSelected,
     );
   }
 }
