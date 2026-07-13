@@ -20,6 +20,8 @@ class TodoPage extends StatefulWidget {
 class _TodoPageState extends State<TodoPage> {
   String? _selectedCategoryId;
   String _selectedOutput = "Uncompleted";
+  String? _filterCategoryId;
+
   final TextEditingController _taskStringController = TextEditingController();
   late FocusNode _taskFieldFocusNode;
 
@@ -54,6 +56,8 @@ class _TodoPageState extends State<TodoPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool todoCompletedFilter = _selectedOutput == "Completed";
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: ListView(
@@ -132,23 +136,39 @@ class _TodoPageState extends State<TodoPage> {
                   ValueListenableBuilder(
                     valueListenable: TodoHandler.todoListNotifier,
                     builder: (context, value, child) {
-                      List<Todo> todoList = TodoHandler.getTodos(
-                        completed: _selectedOutput == "Completed",
+                      List<Todo> todoDisplayList = TodoHandler.getTodos(
+                        completed: todoCompletedFilter,
+                        categoryId: _filterCategoryId,
                       );
                       return ScrollableFadeColumn(
-                        height: 300,
-                        itemCount: todoList.length,
+                        height: 275,
+                        itemCount: todoDisplayList.length,
                         itemBuilder: (context, index) {
-                          Todo currentTodo = todoList[index];
+                          Todo currentTodo = todoDisplayList[index];
                           return TodoCard(
                             currentTodo: currentTodo,
-                            lastCard: index + 1 == todoList.length,
+                            lastCard: index + 1 == todoDisplayList.length,
                           );
                         },
                         emptyWidget: Text(
-                          "No ${_selectedOutput == "Completed" ? "Completed" : "Uncompleted"} Tasks",
+                          "No ${todoCompletedFilter ? "Completed" : "Uncompleted"} Tasks ${_filterCategoryId != null ? "with Filter" : ""}",
                         ),
                       );
+                    },
+                  ),
+                  ValueListenableBuilder(
+                    valueListenable: TodoHandler.todoListNotifier,
+                    builder: (context, value, child) {
+                      return TodoHandler.getTodos().isNotEmpty
+                          ? CategoryFilterCard(
+                              filterCategoryId: _filterCategoryId,
+                              onChanged: (String? id) {
+                                setState(() {
+                                  _filterCategoryId = id;
+                                });
+                              },
+                            )
+                          : SizedBox();
                     },
                   ),
                 ],
@@ -156,6 +176,61 @@ class _TodoPageState extends State<TodoPage> {
             ],
           ),
           SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class CategoryFilterCard extends StatelessWidget {
+  const CategoryFilterCard({
+    super.key,
+    required this._filterCategoryId,
+    required this.onChanged,
+  });
+
+  final String? _filterCategoryId;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TitleCard(
+      widget: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Filter Category: ",
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
+          ),
+          ValueListenableBuilder(
+            valueListenable: CategoryHandler.categoryListNotifier,
+            builder: (context, value, child) {
+              return DropdownButton<String>(
+                value: _filterCategoryId,
+                items: List.generate(value.length + 1, (int index) {
+                  if (index == 0) {
+                    return DropdownMenuItem<String>(
+                      value: null,
+                      child: Text("None"),
+                    );
+                  }
+                  index--;
+                  return DropdownMenuItem<String>(
+                    value: value[index].id,
+                    child: Text(
+                      value[index].name,
+                      style: TextStyle(color: value[index].color),
+                    ),
+                  );
+                }),
+                isDense: true,
+                hint: Text("Category"),
+                onChanged: onChanged,
+              );
+            },
+          ),
         ],
       ),
     );

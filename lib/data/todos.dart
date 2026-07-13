@@ -56,16 +56,16 @@ class TodoHandler {
     todoListNotifier.value = List.from(todoListNotifier.value);
   }
 
-  static List<Todo> getTodos({bool? completed, Category? category}) {
+  static List<Todo> getTodos({bool? completed, String? categoryId}) {
     List<Todo> todoList = TodoHandler.todoListNotifier.value;
     if (completed != null) {
       todoList = todoList
           .where((Todo currentTodo) => currentTodo.completed == completed)
           .toList();
     }
-    if (category != null) {
+    if (categoryId != null) {
       todoList = todoList
-          .where((Todo currentTodo) => currentTodo.category?.id == category.id)
+          .where((Todo currentTodo) => currentTodo.category?.id == categoryId)
           .toList();
     }
     return todoList;
