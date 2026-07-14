@@ -151,7 +151,7 @@ class _TodoPageState extends State<TodoPage> {
                           );
                         },
                         emptyWidget: Text(
-                          "No ${todoCompletedFilter ? "Completed" : "Uncompleted"} Tasks ${_filterCategoryId != null ? "with Filter" : ""}",
+                          "No ${todoCompletedFilter ? "Completed" : "Pending"} Tasks ${_filterCategoryId != null ? "with Filter" : ""}",
                         ),
                       );
                     },

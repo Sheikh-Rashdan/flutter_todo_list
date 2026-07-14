@@ -18,7 +18,7 @@ class TodoDisplaySelectionSegmentedButton extends StatelessWidget {
           value: "Uncompleted",
           label: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Text("Uncompleted"),
+            child: Text("Pending"),
           ),
           icon: Icon(Icons.view_headline_rounded),
         ),
