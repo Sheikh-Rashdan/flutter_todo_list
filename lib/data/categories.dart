@@ -1,18 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:todo_list/data/todos.dart';
 import 'package:uuid/uuid.dart';
 
-class CategoryHandler {
-  static ValueNotifier<List<Category>> categoryListNotifier = ValueNotifier([
-    Category(name: "Work", color: colorList[0]),
-    Category(name: "Groceries", color: colorList[1]),
-    Category(name: "Hobbies", color: colorList[2]),
-    Category(name: "School", color: colorList[3]),
-  ]);
+class CategoryModel with ChangeNotifier {
+  final List<Category> _categoryList = [];
 
-  static List<Color> colorList = const [
+  final List<Color> _colorList = const [
     Color(0xFF7F8FC9),
     Color(0xFF7FAE79),
     Color(0xFFA8A85C),
@@ -22,38 +16,56 @@ class CategoryHandler {
     Color(0xFF9A82C7),
   ];
 
-  static void addCategory({required String name, Color? color, int? index}) {
-    color = color ?? colorList[Random().nextInt(colorList.length)];
-    if (index == null) {
-      categoryListNotifier.value = List.from(categoryListNotifier.value)
-        ..add(Category(name: name, color: color));
-    } else {
-      categoryListNotifier.value = List.from(categoryListNotifier.value)
-        ..insert(index, Category(name: name, color: color));
-    }
+  List<Category> get categoryList => _categoryList;
+  List<Color> get colorList => _colorList;
+
+  CategoryModel() {
+    // temp
+    addCategory(name: "Work", color: colorList[0]);
+    addCategory(name: "Groceries", color: colorList[1]);
+    addCategory(name: "Hobbies", color: colorList[2]);
+    addCategory(name: "School", color: colorList[3]);
   }
 
-  static void removeCategory({required String id}) {
-    Category? category = getCategoryById(id);
-    if (category != null) {
-      TodoHandler.nullAllOfCategory(category);
-    }
-    categoryListNotifier.value = List.from(categoryListNotifier.value)
-      ..remove(category);
-  }
-
-  static Category? getCategoryById(String? id) {
+  Category? getCategoryById(String? id) {
     if (id == null) return null;
-    for (Category currentCategory in categoryListNotifier.value) {
+    for (Category currentCategory in _categoryList) {
       if (currentCategory.id == id) return currentCategory;
     }
     return null;
   }
 
-  static void editCategory(Category category, {required String newName}) {
-    int index = categoryListNotifier.value.indexOf(category);
-    removeCategory(id: category.id);
-    addCategory(name: newName, color: category.color, index: index);
+  void addCategory({
+    required String name,
+    Color? color,
+    String? id,
+    int? index,
+  }) {
+    color = color ?? _colorList[Random().nextInt(_colorList.length)];
+    Category category = Category(name: name, color: color, id: id);
+    if (index == null) {
+      _categoryList.add(category);
+    } else {
+      _categoryList.insert(index, category);
+    }
+    notifyListeners();
+  }
+
+  void removeCategory({required String id}) {
+    Category? category = getCategoryById(id);
+    if (category != null) {
+      _categoryList.remove(category);
+      notifyListeners();
+    }
+  }
+
+  void editCategory(String id, {required String newName}) {
+    Category? category = getCategoryById(id);
+    if (category == null) return;
+    int index = _categoryList.indexOf(category);
+    removeCategory(id: id);
+    addCategory(name: newName, color: category.color, id: id, index: index);
+    notifyListeners();
   }
 }
 
@@ -62,9 +74,6 @@ class Category {
   final String name;
   final Color color;
 
-  Category({required this.name, required this.color}) : id = const Uuid().v4();
-
-  void editCategory(String newName) {
-    CategoryHandler.editCategory(this, newName: newName);
-  }
+  Category({required this.name, required this.color, String? id})
+    : id = id ?? const Uuid().v4();
 }

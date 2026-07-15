@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:todo_list/data/categories.dart";
+import "package:todo_list/data/todos.dart";
 import "package:todo_list/widgets/action_button.dart";
 import "package:todo_list/widgets/confirm_dialog.dart";
 import "package:todo_list/widgets/edit_sheet.dart";
@@ -47,13 +49,18 @@ class CategoryCard extends StatelessWidget {
                   showModalBottomSheet(
                     context: context,
                     builder: (context) {
+                      CategoryModel categoryModel = context
+                          .read<CategoryModel>();
                       return EditSheet(
                         title: "Edit Category",
                         textFieldLabel: "Enter Category Name",
                         currentString: currentCategory.name,
                         newStringController: newCategoryStringController,
                         editObject: (String newString) {
-                          currentCategory.editCategory(newString);
+                          categoryModel.editCategory(
+                            currentCategory.id,
+                            newName: newString,
+                          );
                         },
                       );
                     },
@@ -70,13 +77,15 @@ class CategoryCard extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) {
+                      CategoryModel categoryModel = context
+                          .read<CategoryModel>();
+                      TodoModel todoModel = context.read<TodoModel>();
                       return ConfirmDialog(
                         title: "Delete Category?",
                         iconData: Icons.warning_rounded,
                         onConfirm: () {
-                          CategoryHandler.removeCategory(
-                            id: currentCategory.id,
-                          );
+                          categoryModel.removeCategory(id: currentCategory.id);
+                          todoModel.nullAllOfCategory(currentCategory.id);
                         },
                       );
                     },

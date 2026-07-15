@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list/data/categories.dart';
 import 'package:todo_list/data/todos.dart';
 import 'package:todo_list/widgets/primary_text_field.dart';
@@ -44,10 +45,13 @@ class _TodoPageState extends State<TodoPage> {
       return;
     }
 
-    Category? selectedCategory = CategoryHandler.getCategoryById(
+    CategoryModel categoryModel = context.read<CategoryModel>();
+    TodoModel todoModel = context.read<TodoModel>();
+
+    Category? selectedCategory = categoryModel.getCategoryById(
       _selectedCategoryId,
     );
-    TodoHandler.addTodo(task: taskString, category: selectedCategory);
+    todoModel.addTodo(task: taskString, category: selectedCategory);
 
     setState(() {
       _taskStringController.clear();
@@ -133,10 +137,9 @@ class _TodoPageState extends State<TodoPage> {
                       });
                     },
                   ),
-                  ValueListenableBuilder(
-                    valueListenable: TodoHandler.todoListNotifier,
-                    builder: (context, value, child) {
-                      List<Todo> todoDisplayList = TodoHandler.getTodos(
+                  Consumer<TodoModel>(
+                    builder: (context, todoModel, child) {
+                      List<Todo> todoDisplayList = todoModel.getTodos(
                         completed: todoCompletedFilter,
                         categoryId: _filterCategoryId,
                       );
@@ -156,10 +159,9 @@ class _TodoPageState extends State<TodoPage> {
                       );
                     },
                   ),
-                  ValueListenableBuilder(
-                    valueListenable: TodoHandler.todoListNotifier,
-                    builder: (context, value, child) {
-                      return TodoHandler.getTodos().isNotEmpty
+                  Consumer<TodoModel>(
+                    builder: (context, todoModel, child) {
+                      return todoModel.getTodos().isNotEmpty
                           ? CategoryFilterCard(
                               filterCategoryId: _filterCategoryId,
                               onChanged: (String? id) {
@@ -204,12 +206,13 @@ class CategoryFilterCard extends StatelessWidget {
               context,
             ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
           ),
-          ValueListenableBuilder(
-            valueListenable: CategoryHandler.categoryListNotifier,
-            builder: (context, value, child) {
+          Consumer<CategoryModel>(
+            builder: (context, categoryModel, child) {
               return DropdownButton<String>(
                 value: _filterCategoryId,
-                items: List.generate(value.length + 1, (int index) {
+                items: List.generate(categoryModel.categoryList.length + 1, (
+                  int index,
+                ) {
                   if (index == 0) {
                     return DropdownMenuItem<String>(
                       value: null,
@@ -217,11 +220,12 @@ class CategoryFilterCard extends StatelessWidget {
                     );
                   }
                   index--;
+                  Category category = categoryModel.categoryList[index];
                   return DropdownMenuItem<String>(
-                    value: value[index].id,
+                    value: category.id,
                     child: Text(
-                      value[index].name,
-                      style: TextStyle(color: value[index].color),
+                      category.name,
+                      style: TextStyle(color: category.color),
                     ),
                   );
                 }),

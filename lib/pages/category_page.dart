@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:todo_list/data/categories.dart";
 import "package:todo_list/widgets/category_page/category_card.dart";
 import "package:todo_list/widgets/content_column.dart";
@@ -33,15 +34,17 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   void createCategory() {
+    CategoryModel categoryModel = context.read<CategoryModel>();
+
     String categoryName = _categoryNameStringController.text.trim();
-    Color categoryColor = CategoryHandler.colorList[_categoryColorIndex];
+    Color categoryColor = categoryModel.colorList[_categoryColorIndex];
 
     if (categoryName == "") {
       _categoryFieldFocusNode.requestFocus();
       return;
     }
 
-    CategoryHandler.addCategory(name: categoryName, color: categoryColor);
+    categoryModel.addCategory(name: categoryName, color: categoryColor);
 
     setState(() {
       _categoryNameStringController.clear();
@@ -72,24 +75,28 @@ class _CategoryPageState extends State<CategoryPage> {
                   Center(
                     child: SizedBox(
                       height: 50,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        itemCount: CategoryHandler.colorList.length,
-                        itemBuilder: (context, index) {
-                          Color currentColor = CategoryHandler.colorList[index];
-                          bool selected = index == _categoryColorIndex;
-                          return CategoryColorChip(
-                            selected: selected,
-                            currentColor: currentColor,
-                            onSelected: (value) {
-                              setState(() {
-                                _categoryColorIndex = index;
-                              });
-                            },
-                          );
-                        },
+                      child: Consumer<CategoryModel>(
+                        builder: (context, categoryModel, child) =>
+                            ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              physics: BouncingScrollPhysics(),
+                              itemCount: categoryModel.colorList.length,
+                              itemBuilder: (context, index) {
+                                Color currentColor =
+                                    categoryModel.colorList[index];
+                                bool selected = index == _categoryColorIndex;
+                                return CategoryColorChip(
+                                  selected: selected,
+                                  currentColor: currentColor,
+                                  onSelected: (value) {
+                                    setState(() {
+                                      _categoryColorIndex = index;
+                                    });
+                                  },
+                                );
+                              },
+                            ),
                       ),
                     ),
                   ),
@@ -103,17 +110,17 @@ class _CategoryPageState extends State<CategoryPage> {
               ContentColumn(
                 children: [
                   const TitleCard(title: "Categories"),
-                  ValueListenableBuilder(
-                    valueListenable: CategoryHandler.categoryListNotifier,
-                    builder: (context, value, child) {
+                  Consumer<CategoryModel>(
+                    builder: (context, categoryModel, child) {
+                      List<Category> categoryList = categoryModel.categoryList;
                       return ScrollableFadeColumn(
                         height: 300,
-                        itemCount: value.length,
+                        itemCount: categoryList.length,
                         itemBuilder: (context, index) {
-                          Category currentCategory = value[index];
+                          Category currentCategory = categoryList[index];
                           return CategoryCard(
                             currentCategory: currentCategory,
-                            lastCard: index + 1 == value.length,
+                            lastCard: index + 1 == categoryList.length,
                           );
                         },
                         emptyWidget: Text("No Categories"),

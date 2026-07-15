@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list/data/constants.dart';
 import 'package:todo_list/data/todos.dart';
 import 'package:todo_list/widgets/action_button.dart';
@@ -12,18 +13,19 @@ class TodoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TodoModel todoModel = context.read<TodoModel>();
     List<Widget> actionRowWidgets = currentTodo.completed
         ? [
             ActionButton(
               icon: Icon(Icons.undo_rounded),
               onPressed: () {
-                currentTodo.markUncompleted();
+                todoModel.markTodoAsUncompleted(currentTodo.id);
               },
             ),
             ActionButton(
               icon: Icon(Icons.delete_forever),
               onPressed: () {
-                TodoHandler.removeTodo(id: currentTodo.id);
+                todoModel.removeTodo(id: currentTodo.id);
               },
             ),
           ]
@@ -42,7 +44,7 @@ class TodoCard extends StatelessWidget {
                       currentString: currentTodo.task,
                       newStringController: newTaskStringController,
                       editObject: (String newString) {
-                        currentTodo.editTask(newString);
+                        todoModel.editTodo(currentTodo.id, newTask: newString);
                       },
                     );
                   },
@@ -56,7 +58,7 @@ class TodoCard extends StatelessWidget {
             ActionButton(
               icon: Icon(Icons.check_rounded),
               onPressed: () {
-                currentTodo.markCompleted();
+                todoModel.markTodoAsCompleted(currentTodo.id);
               },
             ),
           ];

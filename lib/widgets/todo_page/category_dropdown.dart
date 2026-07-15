@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list/data/categories.dart';
 
 class CategoryDropdown extends StatelessWidget {
@@ -13,9 +14,9 @@ class CategoryDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: CategoryHandler.categoryListNotifier,
-      builder: (context, value, child) {
+    return Consumer<CategoryModel>(
+      builder: (context, categoryModel, child) {
+        List<Category> categoryList = categoryModel.categoryList;
         return Expanded(
           child: Container(
             decoration: BoxDecoration(
@@ -27,22 +28,22 @@ class CategoryDropdown extends StatelessWidget {
               child: DropdownButton(
                 value: selectedValue,
                 selectedItemBuilder: (context) => List.generate(
-                  value.length,
+                  categoryList.length,
                   (index) => Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      value[index].name,
-                      style: TextStyle(color: value[index].color),
+                      categoryList[index].name,
+                      style: TextStyle(color: categoryList[index].color),
                     ),
                   ),
                 ),
                 items: List.generate(
-                  value.length,
+                  categoryList.length,
                   (index) => DropdownMenuItem(
-                    value: value[index].id,
+                    value: categoryList[index].id,
                     child: Text(
-                      value[index].name,
-                      style: TextStyle(color: value[index].color),
+                      categoryList[index].name,
+                      style: TextStyle(color: categoryList[index].color),
                     ),
                   ),
                 ),

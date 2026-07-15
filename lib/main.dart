@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_list/data/categories.dart';
 import 'package:todo_list/data/constants.dart';
 import 'package:todo_list/data/navigation.dart';
 import 'package:todo_list/data/settings.dart';
+import 'package:todo_list/data/todos.dart';
 import 'package:todo_list/pages/category_page.dart';
 import 'package:todo_list/pages/todo_page.dart';
 
@@ -11,7 +14,17 @@ void main() async {
 
   await Settings.loadSharedPreferences();
 
-  runApp(const MainApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (BuildContext context) => TodoModel()),
+        ChangeNotifierProvider(
+          create: (BuildContext context) => CategoryModel(),
+        ),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
