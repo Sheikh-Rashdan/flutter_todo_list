@@ -9,14 +9,32 @@ import 'package:todo_list/data/todos.dart';
 import 'package:todo_list/pages/category_page.dart';
 import 'package:todo_list/pages/todo_page.dart';
 
+Future<Map<String, dynamic>> loadSharedPreferences() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  Map<String, dynamic> savedSettings = {};
+  savedSettings[KPrefKeys.useDarkBrightnessKey] = prefs.getBool(
+    KPrefKeys.useDarkBrightnessKey,
+  );
+  savedSettings[KPrefKeys.colorThemeIndexKey] = prefs.getInt(
+    KPrefKeys.colorThemeIndexKey,
+  );
+  return savedSettings;
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Settings.loadSharedPreferences();
+  Map<String, dynamic> savedSettings = await loadSharedPreferences();
 
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (BuildContext context) => SettingsModel(
+            savedSettings[KPrefKeys.colorThemeIndexKey],
+            savedSettings[KPrefKeys.useDarkBrightnessKey],
+          ),
+        ),
         ChangeNotifierProvider(create: (BuildContext context) => TodoModel()),
         ChangeNotifierProvider(
           create: (BuildContext context) => CategoryModel(),
@@ -32,28 +50,19 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([
-        Settings.themeColor,
-        Settings.useDarkBrightness,
-      ]),
-      builder: (context, child) {
-        return MaterialApp(
-          title: "Todo App",
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Settings.themeColor.value,
-              brightness: Settings.useDarkBrightness.value
-                  ? Brightness.dark
-                  : Brightness.light,
-              contrastLevel: Settings.useDarkBrightness.value ? 0.3 : 0.2,
-            ),
-            useMaterial3: true,
-          ),
-          home: Home(),
-        );
-      },
+    SettingsModel settingsModel = context.watch<SettingsModel>();
+    return MaterialApp(
+      title: "Todo App",
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: settingsModel.themeColor,
+          brightness: settingsModel.brightness,
+          contrastLevel: settingsModel.useDarkBrightness ? 0.3 : 0.2,
+        ),
+        useMaterial3: true,
+      ),
+      home: Home(),
     );
   }
 }
@@ -63,33 +72,9 @@ class Home extends StatelessWidget {
 
   final List<Widget> pages = const [TodoPage(), CategoryPage()];
 
-  void cycleThemeColor() async {
-    Color currentColor = Settings.themeColor.value;
-    int length = KColors.themeColorOptions.length, newIndex = 0;
-    for (int i = 0; i < length; i++) {
-      if (KColors.themeColorOptions[i] == currentColor) {
-        newIndex = (i + 1) % length;
-        Settings.themeColor.value = KColors.themeColorOptions[newIndex];
-        break;
-      }
-    }
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(KPrefKeys.colorThemeIndexKey, newIndex);
-  }
-
-  void toggleBrightness() async {
-    Settings.useDarkBrightness.value = !Settings.useDarkBrightness.value;
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(
-      KPrefKeys.useDarkBrightnessKey,
-      Settings.useDarkBrightness.value,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    SettingsModel settingsModel = context.read<SettingsModel>();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -104,11 +89,11 @@ class Home extends StatelessWidget {
             child: Row(
               children: [
                 IconButton(
-                  onPressed: cycleThemeColor,
+                  onPressed: settingsModel.cycleThemeColor,
                   icon: Icon(Icons.brush_rounded),
                 ),
                 IconButton(
-                  onPressed: toggleBrightness,
+                  onPressed: settingsModel.toggleBrightness,
                   icon: Icon(
                     Theme.of(context).colorScheme.brightness == Brightness.dark
                         ? Icons.dark_mode_rounded
