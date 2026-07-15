@@ -1,8 +1,11 @@
 # Todo List
 
 A beginner Flutter Todo application built as a learning project
-to explore Flutter fundamentals, state management with `ValueNotifier`,
+to explore Flutter fundamentals, state management with `Provider` using `Consumer`s and `ChangeNotifier`s,
 and local persistence  for settings using `SharedPreferences`.
+
+(This project was initially built using static `ValueNotifier`s and `ValueListenableBuilder`s for state management
+and later migrated to `Provider`)
 
 ## Features
 
@@ -29,7 +32,7 @@ and local persistence  for settings using `SharedPreferences`.
 This project was built to learn and practice:
 
 - Flutter widget composition
-- State management using ValueNotifier
+- State management using Provider
 - Separation of UI and business logic
 - Reusable widget design
 - Local persistence
@@ -41,4 +44,3 @@ This project was built to learn and practice:
   - Insert and Delete Animations
   - Category Color selection Animation
 - Todo & Category persistence
-- Migration to Provider
