@@ -6,8 +6,6 @@ import 'package:todo_list/data/constants.dart';
 import 'package:todo_list/data/navigation.dart';
 import 'package:todo_list/data/settings.dart';
 import 'package:todo_list/data/todos.dart';
-import 'package:todo_list/pages/category_page.dart';
-import 'package:todo_list/pages/todo_page.dart';
 
 Future<Map<String, dynamic>> loadSharedPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -34,6 +32,9 @@ void main() async {
             savedSettings[KPrefKeys.colorThemeIndexKey],
             savedSettings[KPrefKeys.useDarkBrightnessKey],
           ),
+        ),
+        ChangeNotifierProvider(
+          create: (BuildContext context) => NavigationModel(),
         ),
         ChangeNotifierProvider(create: (BuildContext context) => TodoModel()),
         ChangeNotifierProvider(
@@ -70,8 +71,6 @@ class MainApp extends StatelessWidget {
 class Home extends StatelessWidget {
   const Home({super.key});
 
-  final List<Widget> pages = const [TodoPage(), CategoryPage()];
-
   @override
   Widget build(BuildContext context) {
     SettingsModel settingsModel = context.read<SettingsModel>();
@@ -106,37 +105,33 @@ class Home extends StatelessWidget {
         ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      bottomNavigationBar: ValueListenableBuilder(
-        valueListenable: NavigationNotifiers.pageIndex,
-        builder: (context, value, child) {
-          return BottomNavigationBar(
-            currentIndex: value,
-            backgroundColor: Theme.of(
-              context,
-            ).colorScheme.inversePrimary.withAlpha(150),
-            selectedIconTheme: IconThemeData(size: 28),
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.task_outlined),
-                activeIcon: Icon(Icons.task_rounded),
-                label: "Todos",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.category_outlined),
-                activeIcon: Icon(Icons.category_rounded),
-                label: "Categories",
-              ),
-            ],
-            onTap: (int index) {
-              NavigationNotifiers.pageIndex.value = index;
-            },
-          );
-        },
+      bottomNavigationBar: Consumer<NavigationModel>(
+        builder: (context, navigationModel, child) => BottomNavigationBar(
+          currentIndex: navigationModel.pageIndex,
+          backgroundColor: Theme.of(
+            context,
+          ).colorScheme.inversePrimary.withAlpha(150),
+          selectedIconTheme: IconThemeData(size: 28),
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.task_outlined),
+              activeIcon: Icon(Icons.task_rounded),
+              label: "Todos",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.category_outlined),
+              activeIcon: Icon(Icons.category_rounded),
+              label: "Categories",
+            ),
+          ],
+          onTap: (int index) {
+            navigationModel.setIndex(index);
+          },
+        ),
       ),
-      body: ValueListenableBuilder(
-        valueListenable: NavigationNotifiers.pageIndex,
-        builder: (context, value, child) {
-          return pages[value];
+      body: Consumer<NavigationModel>(
+        builder: (context, navigationModel, child) {
+          return navigationModel.page;
         },
       ),
     );
