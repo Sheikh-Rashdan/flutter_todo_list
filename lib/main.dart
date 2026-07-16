@@ -78,7 +78,9 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Todo App",
-          style: KTextStyles.title1.copyWith(
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ),
