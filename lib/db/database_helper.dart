@@ -76,7 +76,7 @@ class DatabaseHelper {
   Future<List<Todo>> getTodos() async {
     Database db = await instance.database;
     List<Map<String, dynamic>> rows = await db.query(_todoTableName);
-    return rows.map((row) => Todo.fromDbMap(row)).toList();
+    return rows.map((row) => Todo.fromDbMap(row)).toList().reversed.toList();
   }
 
   Future<int> insertTodo(Map<String, dynamic> dbMap) async {
