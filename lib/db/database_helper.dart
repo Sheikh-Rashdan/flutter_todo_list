@@ -54,4 +54,13 @@ class DatabaseHelper {
     Database db = await instance.database;
     return await db.insert(_categoryTableName, dbMap);
   }
+
+  Future<int> deleteCategory(String id) async {
+    Database db = await instance.database;
+    return await db.delete(
+      _categoryTableName,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
 }

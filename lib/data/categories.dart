@@ -68,6 +68,7 @@ class CategoryModel with ChangeNotifier {
     Category? category = getCategoryById(id);
     if (category != null) {
       _categoryList.remove(category);
+      removeCategoryDb(category);
       notifyListeners();
     }
   }
@@ -89,6 +90,14 @@ class CategoryModel with ChangeNotifier {
   Future<void> addCategoryDb(Category category) async {
     try {
       DatabaseHelper.instance.insertCategory(category.toDbMap());
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> removeCategoryDb(Category category) async {
+    try {
+      DatabaseHelper.instance.deleteCategory(category.id);
     } catch (e) {
       print(e);
     }
