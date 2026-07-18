@@ -54,7 +54,7 @@ class CategoryModel with ChangeNotifier {
     int? index,
   }) {
     color = color ?? _colorList[Random().nextInt(_colorList.length)];
-    Category category = Category(name: name, color: color, id: id);
+    Category category = Category(id: id, name: name, color: color);
     if (index == null) {
       _categoryList.add(category);
     } else {
@@ -77,7 +77,7 @@ class CategoryModel with ChangeNotifier {
     if (category == null) return;
     int index = _categoryList.indexOf(category);
     removeCategory(id: id);
-    addCategory(name: newName, color: category.color, id: id, index: index);
+    addCategory(id: id, name: newName, color: category.color, index: index);
     notifyListeners();
   }
 
