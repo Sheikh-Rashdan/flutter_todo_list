@@ -5,7 +5,7 @@ import 'package:todo_list/db/database_helper.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryModel with ChangeNotifier {
-  List<Category> _categoryList = [];
+  static List<Category> _categoryList = [];
 
   static final List<Color> _colorList = const [
     Color(0xFF7F8FC9),
@@ -39,7 +39,7 @@ class CategoryModel with ChangeNotifier {
     return _colorList.first;
   }
 
-  Category? getCategoryById(String? id) {
+  static Category? getCategoryById(String? id) {
     if (id == null) return null;
     for (Category currentCategory in _categoryList) {
       if (currentCategory.id == id) return currentCategory;

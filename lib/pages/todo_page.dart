@@ -45,10 +45,9 @@ class _TodoPageState extends State<TodoPage> {
       return;
     }
 
-    CategoryModel categoryModel = context.read<CategoryModel>();
     TodoModel todoModel = context.read<TodoModel>();
 
-    Category? selectedCategory = categoryModel.getCategoryById(
+    Category? selectedCategory = CategoryModel.getCategoryById(
       _selectedCategoryId,
     );
     todoModel.addTodo(task: taskString, category: selectedCategory);

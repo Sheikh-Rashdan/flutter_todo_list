@@ -1,6 +1,7 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_list/data/categories.dart';
+import 'package:todo_list/data/todos.dart';
 
 class DatabaseHelper {
   static final String _databaseName = "todo_list.db";
@@ -35,6 +36,14 @@ class DatabaseHelper {
         color INTEGER NOT NULL
       )
     ''');
+    await db.execute('''
+      CREATE TABLE $_todoTableName (
+        id TEXT PRIMARY KEY,
+        task TEXT NOT NULL,
+        category TEXT,
+        completed INTEGER
+      )
+    ''');
     print("CREATED DATABASE SUCCESFULLY");
   }
 
@@ -62,5 +71,21 @@ class DatabaseHelper {
       where: "id = ?",
       whereArgs: [id],
     );
+  }
+
+  Future<List<Todo>> getTodos() async {
+    Database db = await instance.database;
+    List<Map<String, dynamic>> rows = await db.query(_todoTableName);
+    return rows.map((row) => Todo.fromDbMap(row)).toList();
+  }
+
+  Future<int> insertTodo(Map<String, dynamic> dbMap) async {
+    Database db = await instance.database;
+    return await db.insert(_todoTableName, dbMap);
+  }
+
+  Future<int> deleteTodo(String id) async {
+    Database db = await instance.database;
+    return await db.delete(_todoTableName, where: "id = ?", whereArgs: [id]);
   }
 }
