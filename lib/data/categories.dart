@@ -88,19 +88,11 @@ class CategoryModel with ChangeNotifier {
   }
 
   Future<void> addCategoryDb(Category category) async {
-    try {
-      DatabaseHelper.instance.insertCategory(category.toDbMap());
-    } catch (e) {
-      print(e);
-    }
+    DatabaseHelper.instance.insertCategory(category.toDbMap());
   }
 
   Future<void> removeCategoryDb(Category category) async {
-    try {
-      DatabaseHelper.instance.deleteCategory(category.id);
-    } catch (e) {
-      print(e);
-    }
+    DatabaseHelper.instance.deleteCategory(category.id);
   }
 }
 
