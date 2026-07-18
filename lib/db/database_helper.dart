@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:todo_list/data/categories.dart';
 import 'package:todo_list/data/todos.dart';
+import 'package:uuid/uuid.dart';
 
 class DatabaseHelper {
   static final String _databaseName = "todo_list.db";
@@ -44,10 +45,11 @@ class DatabaseHelper {
         completed INTEGER
       )
     ''');
+    await insertDefaultCategories(db);
     print("CREATED DATABASE SUCCESFULLY");
   }
 
-  Future<void> debugDeleteDatabase() async {
+  static Future<void> debugDeleteDatabase() async {
     String databasePath = join(await getDatabasesPath(), _databaseName);
     await deleteDatabase(databasePath);
     print("DELETE DATABASE SUCCESSFULLY");
@@ -87,5 +89,16 @@ class DatabaseHelper {
   Future<int> deleteTodo(String id) async {
     Database db = await instance.database;
     return await db.delete(_todoTableName, where: "id = ?", whereArgs: [id]);
+  }
+
+  Future<void> insertDefaultCategories(Database db) async {
+    Uuid uuid = Uuid();
+    await db.rawInsert('''
+      INSERT INTO $_categoryTableName VALUES
+      ('${uuid.v4()}', 'Groceries', 0),
+      ('${uuid.v4()}', 'Chores', 1),
+      ('${uuid.v4()}', 'Groceries', 2),
+      ('${uuid.v4()}', 'Hobbies', 3)
+    ''');
   }
 }
