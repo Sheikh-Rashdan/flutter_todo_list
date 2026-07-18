@@ -1,12 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:todo_list/db/database_helper.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryModel with ChangeNotifier {
-  final List<Category> _categoryList = [];
+  List<Category> _categoryList = [];
 
-  final List<Color> _colorList = const [
+  static final List<Color> _colorList = const [
     Color(0xFF7F8FC9),
     Color(0xFF7FAE79),
     Color(0xFFA8A85C),
@@ -16,15 +17,26 @@ class CategoryModel with ChangeNotifier {
     Color(0xFF9A82C7),
   ];
 
+  CategoryModel() {
+    loadCategories();
+  }
+
   List<Category> get categoryList => _categoryList;
   List<Color> get colorList => _colorList;
 
-  CategoryModel() {
-    // temp
-    addCategory(name: "Work", color: colorList[0]);
-    addCategory(name: "Groceries", color: colorList[1]);
-    addCategory(name: "Hobbies", color: colorList[2]);
-    addCategory(name: "School", color: colorList[3]);
+  static int getColorIndex(Color color) {
+    int index = _colorList.indexOf(color);
+    if (index != -1) {
+      return index;
+    }
+    return 0;
+  }
+
+  static Color getColor(int index) {
+    if (index >= 0 && index < _colorList.length) {
+      return _colorList[index];
+    }
+    return _colorList.first;
   }
 
   Category? getCategoryById(String? id) {
@@ -48,6 +60,7 @@ class CategoryModel with ChangeNotifier {
     } else {
       _categoryList.insert(index, category);
     }
+    addCategoryDb(category);
     notifyListeners();
   }
 
@@ -67,6 +80,19 @@ class CategoryModel with ChangeNotifier {
     addCategory(name: newName, color: category.color, id: id, index: index);
     notifyListeners();
   }
+
+  Future<void> loadCategories() async {
+    _categoryList = await DatabaseHelper.instance.getCategories();
+    notifyListeners();
+  }
+
+  Future<void> addCategoryDb(Category category) async {
+    try {
+      DatabaseHelper.instance.insertCategory(category.toDbMap());
+    } catch (e) {
+      print(e);
+    }
+  }
 }
 
 class Category {
@@ -76,4 +102,20 @@ class Category {
 
   Category({required this.name, required this.color, String? id})
     : id = id ?? const Uuid().v4();
+
+  Map<String, dynamic> toDbMap() {
+    return {
+      'id': id,
+      'name': name,
+      'color': CategoryModel.getColorIndex(color),
+    };
+  }
+
+  factory Category.fromDbMap(Map<String, dynamic> dbMap) {
+    return Category(
+      id: dbMap["id"],
+      name: dbMap["name"],
+      color: CategoryModel.getColor(dbMap["color"]),
+    );
+  }
 }
