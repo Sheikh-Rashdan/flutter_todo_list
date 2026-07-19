@@ -80,7 +80,7 @@ class Home extends StatelessWidget {
           "Todo App",
           style: TextStyle(
             fontSize: 24,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.tertiary,
           ),
         ),
@@ -108,27 +108,30 @@ class Home extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       bottomNavigationBar: Consumer<NavigationModel>(
-        builder: (context, navigationModel, child) => BottomNavigationBar(
-          currentIndex: navigationModel.pageIndex,
-          backgroundColor: Theme.of(
-            context,
-          ).colorScheme.inversePrimary.withAlpha(150),
-          selectedIconTheme: IconThemeData(size: 28),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.task_outlined),
-              activeIcon: Icon(Icons.task_rounded),
-              label: "Todos",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.category_outlined),
-              activeIcon: Icon(Icons.category_rounded),
-              label: "Categories",
-            ),
-          ],
-          onTap: (int index) {
-            navigationModel.setIndex(index);
-          },
+        builder: (context, navigationModel, child) => SizedBox(
+          height: 70,
+          child: BottomNavigationBar(
+            currentIndex: navigationModel.pageIndex,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.inversePrimary.withAlpha(150),
+            selectedIconTheme: IconThemeData(size: 28),
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.task_outlined),
+                activeIcon: Icon(Icons.task_rounded),
+                label: "Todos",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.category_outlined),
+                activeIcon: Icon(Icons.category_rounded),
+                label: "Categories",
+              ),
+            ],
+            onTap: (int index) {
+              navigationModel.setIndex(index);
+            },
+          ),
         ),
       ),
       body: Consumer<NavigationModel>(

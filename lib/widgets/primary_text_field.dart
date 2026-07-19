@@ -32,7 +32,7 @@ class PrimaryTextField extends StatelessWidget {
           labelText,
           style: TextStyle(
             color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
         prefixIcon: prefixIcon,
