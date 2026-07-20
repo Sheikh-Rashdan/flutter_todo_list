@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_list/data/categories.dart';
@@ -23,6 +24,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   Map<String, dynamic> savedSettings = await loadSharedPreferences();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   runApp(
     MultiProvider(
