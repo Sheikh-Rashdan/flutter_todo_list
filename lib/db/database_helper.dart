@@ -97,7 +97,7 @@ class DatabaseHelper {
       INSERT INTO $_categoryTableName VALUES
       ('${uuid.v4()}', 'Groceries', 0),
       ('${uuid.v4()}', 'Chores', 1),
-      ('${uuid.v4()}', 'Groceries', 2),
+      ('${uuid.v4()}', 'Work', 2),
       ('${uuid.v4()}', 'Hobbies', 3)
     ''');
   }
