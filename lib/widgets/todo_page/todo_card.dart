@@ -14,7 +14,8 @@ class TodoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TodoModel todoModel = context.read<TodoModel>();
-    List<Widget> actionRowWidgets = currentTodo.completed
+    bool completed = currentTodo.completed;
+    List<Widget> actionRowWidgets = completed
         ? [
             ActionButton(
               icon: Icon(Icons.undo_rounded),
@@ -63,38 +64,57 @@ class TodoCard extends StatelessWidget {
             ),
           ];
 
-    return Container(
-      margin: lastCard
-          ? const EdgeInsets.symmetric(vertical: 10)
-          : const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: currentTodo.category?.color ?? KColors.defaultCategoryColor,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(16),
-          bottom: Radius.circular(6),
-        ),
+    return Dismissible(
+      key: Key(currentTodo.id),
+      direction: completed
+          ? DismissDirection.endToStart
+          : DismissDirection.startToEnd,
+      background: Container(
+        alignment: completed ? Alignment.centerRight : Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Icon(completed ? Icons.undo_rounded : Icons.check_rounded),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                currentTodo.task,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  decoration: currentTodo.completed
-                      ? TextDecoration.lineThrough
-                      : null,
-                  fontStyle: currentTodo.completed ? FontStyle.italic : null,
-                  decorationThickness: 2,
+      onDismissed: (DismissDirection direction) async {
+        await Future.delayed(Duration(milliseconds: 300));
+        if (completed) {
+          todoModel.markTodoAsUncompleted(currentTodo.id);
+        } else {
+          todoModel.markTodoAsCompleted(currentTodo.id);
+        }
+      },
+      child: Container(
+        margin: lastCard
+            ? const EdgeInsets.symmetric(vertical: 10)
+            : const EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: currentTodo.category?.color ?? KColors.defaultCategoryColor,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(16),
+            bottom: Radius.circular(6),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  currentTodo.task,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    decoration: currentTodo.completed
+                        ? TextDecoration.lineThrough
+                        : null,
+                    fontStyle: currentTodo.completed ? FontStyle.italic : null,
+                    decorationThickness: 2,
+                  ),
                 ),
               ),
             ),
-          ),
-          Row(children: actionRowWidgets),
-        ],
+            Row(children: actionRowWidgets),
+          ],
+        ),
       ),
     );
   }
