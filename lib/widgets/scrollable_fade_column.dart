@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ScrollableFadeColumn extends StatelessWidget {
   const ScrollableFadeColumn({
@@ -33,7 +34,13 @@ class ScrollableFadeColumn extends StatelessWidget {
       },
       child: Column(
         children: [
-          itemCount == 0 ? emptyWidget ?? SizedBox() : SizedBox(),
+          itemCount == 0
+              ? emptyWidget
+                        ?.animate()
+                        .fadeIn(duration: 300.ms, delay: 100.ms)
+                        .moveY(begin: -5, end: 0) ??
+                    SizedBox()
+              : SizedBox(),
           ConstrainedBox(
             constraints: BoxConstraints(minHeight: 0, maxHeight: height),
             child: ListView.builder(

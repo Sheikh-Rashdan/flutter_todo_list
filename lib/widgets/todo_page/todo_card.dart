@@ -74,8 +74,7 @@ class TodoCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Icon(completed ? Icons.undo_rounded : Icons.check_rounded),
       ),
-      onDismissed: (DismissDirection direction) async {
-        await Future.delayed(Duration(milliseconds: 300));
+      onDismissed: (DismissDirection direction) {
         if (completed) {
           todoModel.markTodoAsUncompleted(currentTodo.id);
         } else {
